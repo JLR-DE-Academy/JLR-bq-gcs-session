@@ -1,2 +1,9 @@
-DESTINATION_BUCKET_NAME=packt-data-eng-on-gcp-data-bucket
-gsutil cp ./dataset/* gs://{$DESTINATION_BUCKET_NAME}/dataset/
+#!/bin/bash
+set -eu
+
+
+DESTINATION_BUCKET_NAME=<my-bucket-name>
+
+gsutil mb gs://$DESTINATION_BUCKET_NAME
+
+gsutil cp -r ./dataset/* gs://$DESTINATION_BUCKET_NAME/dataset/
