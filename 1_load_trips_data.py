@@ -1,12 +1,15 @@
 from google.cloud import bigquery
 
 
+# TODO : Change to your name
+DATASET_NAME_PREFIX = '2022_temp_<your-name>'
+
 PROJECT_ID = "jlr-dl-cat-training"
 BUCKET_NAME = "2022-jlr-de-training"
-GCS_URI = "gs://{}/dataset/trips/20180101/*.json".format(BUCKET_NAME)
+GCS_URI = f"gs://{BUCKET_NAME}/dataset/trips/20180101/*.json"
 # This uri for load data from 2018-01-02
-#GCS_URI = "gs://{}/dataset/trips/20180102/*.json".format(BUCKET_NAME)
-TABLE_ID = "{}.2022_DE_Training_raw_bikesharing.trips".format(PROJECT_ID)
+#GCS_URI = f"gs://{BUCKET_NAME}/dataset/trips/20180102/*.json"
+TABLE_ID = f"{PROJECT_ID}.{DATASET_NAME_PREFIX}_raw_bikesharing.trips"
 
 client = bigquery.Client()
 
@@ -24,7 +27,7 @@ def load_gcs_to_bigquery_event_data(GCS_URI, TABLE_ID, table_schema):
     load_job.result()
     table = client.get_table(TABLE_ID)
 
-    print("Loaded {} rows to table {}".format(table.num_rows, TABLE_ID))
+    print(f"Loaded {table.num_rows} rows to table {TABLE_ID}")
 
 bigquery_table_schema = [
     bigquery.SchemaField("trip_id", "STRING"),

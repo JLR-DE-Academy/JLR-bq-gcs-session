@@ -2,8 +2,11 @@ import sys
 from google.cloud import bigquery
 
 
+# TODO : Change to your name
+DATASET_NAME_PREFIX = '2022_temp_<your-name>'
+
 PROJECT_ID = "jlr-dl-cat-training"
-target_table_id = "{}.2022_DE_Training_dwh_bikesharing.fact_region_gender_daily".format(PROJECT_ID)
+target_table_id = f"{PROJECT_ID}.{DATASET_NAME_PREFIX}_dwh_bikesharing.fact_region_gender_daily"
 
 
 def create_fact_table(PROJECT_ID, target_table_id):
@@ -15,16 +18,16 @@ def create_fact_table(PROJECT_ID, target_table_id):
     destination=target_table_id,
     write_disposition='WRITE_APPEND')
 
-    sql = """SELECT DATE(start_date) as trip_date,
+    sql = f"""SELECT DATE(start_date) as trip_date,
                 region_id,
                 member_gender,
                 COUNT(trip_id) as total_trips
-                FROM `{PROJECT_ID}.2022_DE_Training_raw_bikesharing.trips` trips
-                JOIN `{PROJECT_ID}.2022_DE_Training_raw_bikesharing.stations` stations
+                FROM `{PROJECT_ID}.{DATASET_NAME_PREFIX}_raw_bikesharing.trips` trips
+                JOIN `{PROJECT_ID}.{DATASET_NAME_PREFIX}_raw_bikesharing.stations` stations
                 ON trips.start_station_id = stations.station_id
                 WHERE DATE(start_date) = DATE('{load_date}') AND member_gender IS NOT NULL
                 GROUP BY trip_date, region_id, member_gender
-                ;""".format(PROJECT_ID=PROJECT_ID, load_date=load_date)
+                ;"""
 
     query_job = client.query(sql, job_config=job_config)
 
